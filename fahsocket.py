@@ -30,7 +30,7 @@ class Fahsocket(ContextDecorator):
         self.debug_ON = debug_ON #!Verbose debug output and write to log if log_ON is True.
         self.sh_NLINE = sh_NLINE #!Show '\n' after .splitlines() is called.
         self.connected_client = False #! Declare incase __exit__() before connect() is called.
-        self.connected_server = False #! Declare incase __exit__() before connect() is called.
+        self.connected_server = False #! Declare incase __exit__() before accept() is called.
 
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
