@@ -26,7 +26,7 @@ with Fahsocket(16, 7, True, True, True, False) as s1:
 
     s1.connect('10.0.0.10', 36330)
 
-    s1.send('auth C86fR57f\n')
+    s1.send('auth YourPassHere\n')
     s1.recv(recvsize)
 
     s1.send('updates add 0 5 $slot-info\n')

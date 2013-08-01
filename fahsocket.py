@@ -29,7 +29,8 @@ class Fahsocket(ContextDecorator):
         self.log_ON = log_ON #!Log console and debug output to log.txt.
         self.debug_ON = debug_ON #!Verbose debug output and write to log if log_ON is True.
         self.sh_NLINE = sh_NLINE #!Show '\n' after .splitlines() is called.
-        self.connected = False #! Declare incase __exit__() before connect() is called.
+        self.connected_client = False #! Declare incase __exit__() before connect() is called.
+        self.connected_server = False #! Declare incase __exit__() before connect() is called.
 
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -68,7 +69,7 @@ class Fahsocket(ContextDecorator):
     def __exit__(self, type, value, tb):
 
         #!If were exiting after connection has been established.
-        if self.connected is True:
+        if self.connected_client is True:
 
             print('\nFahsocket.__exit__(); Flushing Socket Buffer!')
             Fahsocket.dolog(self, 'Fahsocket.__exit__(); Flushing Socket Buffer!')
@@ -90,6 +91,16 @@ class Fahsocket(ContextDecorator):
             print('-> self.sock.close()!')
             Fahsocket.dolog(self, '-> self.sock.close()!')
             self.sock.close()
+
+        elif self.connected_server is True:
+
+            print('-> self.connection.shutdown()!')
+            Fahsocket.dolog(self, '-> self.connection.shutdown()!')
+            self.connection.shutdown(2)
+
+            print('-> self.connection.close()!')
+            Fahsocket.dolog(self, '-> self.connection.close()!')
+            self.connection.close()
 
         else:
             print('Fahsocket.__exit__():')
@@ -137,7 +148,7 @@ class Fahsocket(ContextDecorator):
     def accept(self):
 
         self.connection, self.address = self.sock.accept() #!Not connected yet.
-        self.connected = True
+        self.connected_server = True #!Now were connected!
         print('Accepting incoming connection from ' + str(self.address))
         Fahsocket.dolog(self, 'Accepting incoming connection from ' + str(self.address))
 
@@ -150,7 +161,7 @@ class Fahsocket(ContextDecorator):
         print('\nConnecting: ' + str(host) + ':' + str(port) + '\n')
         Fahsocket.dolog(self, 'Connecting: ' + str(host) + ':' + str(port))
         self.sock.connect((host, port)) #!Not connected yet.
-        self.connected = True #!Now were connected!
+        self.connected_client = True #!Now were connected!
 
         if self.get_HOC is True:
 
@@ -160,8 +171,6 @@ class Fahsocket(ContextDecorator):
         else:
             Fahsocket.recv(self, self.recvsize)
 
-        return self.connected
-
 
 ###########################################################################
     def send(self, command):
@@ -169,8 +178,6 @@ class Fahsocket(ContextDecorator):
         print('\nSending: ' + str(command.splitlines(self.sh_NLINE)[0]) + '\n')
         Fahsocket.dolog(self, 'Sending: ' + str(command.splitlines(self.sh_NLINE)[0]))
         self.sock.send(command.encode('utf-8'))
-
-        return command
 
 
 ###########################################################################
@@ -238,6 +245,4 @@ class Fahsocket(ContextDecorator):
             with closing(open('log.txt', 'a')) as self.logfile:
 
                 self.logfile.write(output + '\n')
-
-                return output
 
