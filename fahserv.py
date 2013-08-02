@@ -15,12 +15,57 @@
 #!    Copyright Cody Ferber, 2013.
 ###########################################################################
 from fahsocket import Fahsocket
+import select
+import sys
 
 ###########################################################################
-with Fahsocket(16, 7, True, True, True, False) as s1:
+with Fahsocket(16, None, False, True, True, False) as s1:
 
     #!
+    sendsize = s1.setsendbuffer(False, None)
+    recvsize = s1.setrecvbuffer(False, None)
+
     s1.bind('localhost', 80)
     s1.listen(3)
+
     conn1 = s1.accept()
+    print('Sending: ACK: Connected!')
+    s1.dolog('Sending: ACK: Connected!')
+    conn1.send('ACK: Connected!'.encode('utf-8'))
     #!
+
+    try:	
+        while 1:
+            rlist, wlist, elist = select.select([conn1.fileno()], [], [], 5)
+
+            for conn in rlist:
+
+                #!
+                recvdata = conn1.recv(recvsize)
+                recvdata = recvdata.decode('utf-8')
+
+                if 'ping' in recvdata:
+
+                    output = 'pong'
+                    print('Received: ' + recvdata)
+                    s1.dolog('Received: ' + recvdata)
+                    print('Sending: ' + output)
+                    s1.dolog('Sending: ' + output)
+                    conn1.send(output.encode('utf-8'))
+
+                elif 'quit' in recvdata:
+
+                    output = 'goodbye'
+                    print('Received: ' + recvdata)
+                    s1.dolog('Received: ' + recvdata)
+                    print('Sending: ' + output)
+                    s1.dolog('Sending: ' + output)
+                    conn1.send(output.encode('utf-8'))
+                    sys.exit(0)
+                #!
+
+    except KeyboardInterrupt:
+
+        #!
+        pass
+        #!

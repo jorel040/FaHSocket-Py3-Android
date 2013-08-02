@@ -71,18 +71,8 @@ class Fahsocket(ContextDecorator):
         #!If were exiting after connection has been established.
         if self.connected_client is True:
 
-            print('\nFahsocket.__exit__(); Flushing Socket Buffer!')
-            Fahsocket.dolog(self, 'Fahsocket.__exit__(); Flushing Socket Buffer!')
-
-            if self.buffer == Fahsocket.recv(self, self.recvsize):
-
-                print('Buffer Empty!')
-                Fahsocket.dolog(self, 'Buffer Empty!')
-
-            else:
-                print('ERROR: Buffer not empty...Flushing Buffer!')
-                Fahsocket.dolog(self, 'ERROR: Buffer not empty...Flushing Buffer!')
-                Fahsocket.recv(self, self.recvsize)
+            print('\nFahsocket.__exit__(); Be sure all data has been received!')
+            Fahsocket.dolog(self, 'Fahsocket.__exit__(); Be sure all data has been received!')
 
             print('-> self.sock.shutdown()!')
             Fahsocket.dolog(self, '-> self.sock.shutdown()!')
@@ -93,6 +83,9 @@ class Fahsocket(ContextDecorator):
             self.sock.close()
 
         elif self.connected_server is True:
+
+            print('\nFahsocket.__exit__(); Be sure all data has been sent!')
+            Fahsocket.dolog(self, 'Fahsocket.__exit__(); Be sure all data has been sent!')
 
             print('-> self.connection.shutdown()!')
             Fahsocket.dolog(self, '-> self.connection.shutdown()!')
@@ -149,7 +142,7 @@ class Fahsocket(ContextDecorator):
 
         self.connection, self.address = self.sock.accept() #!Not connected yet.
         self.connected_server = True #!Now were connected!
-        print('Accepting incoming connection from ' + str(self.address))
+        print('\nAccepting incoming connection from ' + str(self.address))
         Fahsocket.dolog(self, 'Accepting incoming connection from ' + str(self.address))
 
         return self.connection

@@ -15,46 +15,19 @@
 #!    Copyright Cody Ferber, 2013.
 ###########################################################################
 from fahsocket import Fahsocket
-import select
 
 ###########################################################################
-with Fahsocket(16, 7, True, True, True, False) as s1:
+with Fahsocket(16, None, False, True, True, False) as s1:
 
     #!
     sendsize = s1.setsendbuffer(False, None)
     recvsize = s1.setrecvbuffer(False, None)
 
-    s1.connect('10.0.0.10', 36330)
+    s1.connect('localhost', 80)
 
-    s1.send('auth YourPassHere\n')
+    s1.send('ping')
     s1.recv(recvsize)
 
-    s1.send('updates add 0 5 $slot-info\n')
-    s1.recv(recvsize)
-
-    s1.send('updates add 1 5 $queue-info\n')
+    s1.send('quit')
     s1.recv(recvsize)
     #!
-
-    try:	
-        while 1:
-            rlist, wlist, elist = select.select([s1.sock.fileno()], [], [], 5)
-
-            for sock in rlist:
-
-                #!
-                recvdata = s1.recv(recvsize)
-                id_eta = s1.getparameter(recvdata, 'eta')
-
-                for i, v in enumerate(id_eta):
-
-                    print('id:' + str(i) + ' ' + v)
-                    s1.dolog('id:' + str(i) + ' ' + v)
-                #!
-
-    except KeyboardInterrupt:
-
-        #!
-        s1.send('quit\n')
-        s1.recv(recvsize)
-        #!
