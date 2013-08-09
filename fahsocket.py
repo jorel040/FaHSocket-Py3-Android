@@ -29,8 +29,8 @@ class Fahsocket(ContextDecorator):
         self.log_ON = log_ON #!Log console and debug output to log.txt.
         self.debug_ON = debug_ON #!Verbose debug output and write to log if log_ON is True.
         self.sh_NLINE = sh_NLINE #!Show '\n' after .splitlines() is called.
-        self.connected_client = False #! Declare incase __exit__() before connect() is called.
-        self.connected_server = False #! Declare incase __exit__() before accept() is called.
+        self.connected_client = False #!Declare incase __exit__() before connect() is called.
+        self.connected_server = False #!Declare incase __exit__() before accept() is called.
 
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -109,13 +109,12 @@ class Fahsocket(ContextDecorator):
             Fahsocket.dolog(self, 'Error Value: ' + str(value))
             Fahsocket.dolog(self, 'Traceback: ' + str(tb))
 
-        #!Return True on exception; else return False on no exception.
-        if type is not None:
+        if type is None:
 
-            return True
+            return False
     
         else:
-            return False
+            return True #!Return True on exception.
 
 
 ###########################################################################
