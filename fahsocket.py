@@ -82,6 +82,7 @@ class Fahsocket(ContextDecorator):
             Fahsocket.dolog(self, '-> self.sock.close()!')
             self.sock.close()
 
+        #!If were exiting after connection has been established.
         elif self.connected_server is True:
 
             print('\nFahsocket.__exit__(); Be sure all data has been sent!')
