@@ -19,7 +19,6 @@ from fahsocket import Fahsocket
 ###########################################################################
 with Fahsocket(16, None, False, True, True, False) as s1:
 
-    #!
     sendsize = s1.setsendbuffer(False, None)
     recvsize = s1.setrecvbuffer(False, None)
 
@@ -30,4 +29,3 @@ with Fahsocket(16, None, False, True, True, False) as s1:
 
     s1.send('quit')
     s1.recv(recvsize)
-    #!

@@ -21,7 +21,6 @@ import sys
 ###########################################################################
 with Fahsocket(16, None, False, True, True, False) as s1:
 
-    #!
     sendsize = s1.setsendbuffer(False, None)
     recvsize = s1.setrecvbuffer(False, None)
 
@@ -32,7 +31,6 @@ with Fahsocket(16, None, False, True, True, False) as s1:
     print('Sending: ACK: Connected!')
     s1.dolog('Sending: ACK: Connected!')
     conn1.send('ACK: Connected!'.encode('utf-8'))
-    #!
 
     try:	
         while 1:
@@ -40,9 +38,15 @@ with Fahsocket(16, None, False, True, True, False) as s1:
 
             for conn in rlist:
 
-                #!
                 recvdata = conn1.recv(recvsize)
                 recvdata = recvdata.decode('utf-8')
+
+                if recvdata is '':
+
+                    print('Client not sending data! Disconnecting!')
+                    s1.dolog('Client not sending data! Disconnecting!')
+
+                    sys.exit(1)
 
                 if 'ping' in recvdata:
 
@@ -62,10 +66,7 @@ with Fahsocket(16, None, False, True, True, False) as s1:
                     s1.dolog('Sending: ' + output)
                     conn1.send(output.encode('utf-8'))
                     sys.exit(0)
-                #!
 
     except KeyboardInterrupt:
 
-        #!
-        pass
-        #!
+        sys.exit(2)

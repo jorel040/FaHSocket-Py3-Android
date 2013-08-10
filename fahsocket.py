@@ -166,11 +166,22 @@ class Fahsocket(ContextDecorator):
 
 
 ###########################################################################
-    def send(self, command):
+    def send(self, tosend):
 
-        print('\nSending: ' + str(command.splitlines(self.sh_NLINE)[0]) + '\n')
-        Fahsocket.dolog(self, 'Sending: ' + str(command.splitlines(self.sh_NLINE)[0]))
-        self.sock.send(command.encode('utf-8'))
+        print('\nSending: ' + str(tosend.splitlines(self.sh_NLINE)[0]) + '\n')
+        Fahsocket.dolog(self, 'Sending: ' + str(tosend.splitlines(self.sh_NLINE)[0]))
+        self.so_sent = self.sock.send(tosend.encode('utf-8'))
+        self.so_tosend = len(tosend.encode('utf-8'))
+
+        if self.so_sent is not self.so_tosend:
+
+            print('Not all data sent!  Try Fahsocket.sendall()!')
+            Fahsocket.dolog(self, 'Not all data sent!  Try Fahsocket.sendall()!')
+
+            return False
+
+        else:
+            return True
 
 
 ###########################################################################
