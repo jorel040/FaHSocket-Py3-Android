@@ -45,7 +45,6 @@ with Fahsocket(16, None, False, True, True, False) as s1:
 
                     print('Client not sending data! Disconnecting!')
                     s1.dolog('Client not sending data! Disconnecting!')
-
                     sys.exit(1)
 
                 if 'ping' in recvdata:
