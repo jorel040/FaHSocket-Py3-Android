@@ -20,7 +20,6 @@ import socket
 ###########################################################################
 class Fahsocket(ContextDecorator):
 ###########################################################################
-
     def __init__(self, timeout=None, size_HDR=None, get_HOC=False, log_ON=False, debug_ON=False, sh_NLINE=False):
 
         self.timeout = timeout #!Time to socket time-out.
@@ -39,8 +38,6 @@ class Fahsocket(ContextDecorator):
 
             print('\nError: ' + str(msg) + '!\n')
             Fahsocket.dolog(self, 'Error: ' + str(msg))
-
-        return None
 
 
 ###########################################################################
@@ -64,11 +61,10 @@ class Fahsocket(ContextDecorator):
 
         return self
 
-
 ###########################################################################
     def __exit__(self, type, value, tb):
 
-        #!If were exiting after connection has been established.
+        #!If were exiting after client connection has been established.
         if self.connected_client is True:
 
             print('\nFahsocket.__exit__(); Be sure all data has been received!')
@@ -82,7 +78,7 @@ class Fahsocket(ContextDecorator):
             Fahsocket.dolog(self, '-> self.sock.close()!')
             self.sock.close()
 
-        #!If were exiting after connection has been established.
+        #!If were exiting after server connection has been established.
         elif self.connected_server is True:
 
             print('\nFahsocket.__exit__(); Be sure all data has been sent!')
@@ -188,9 +184,8 @@ class Fahsocket(ContextDecorator):
     def recv(self, size):
 
         self.pyon_data = []
-        self.buffer = self.sock.recv(size).splitlines(self.sh_NLINE)
 
-        for i, v in enumerate(self.buffer):
+        for i, v in enumerate(self.sock.recv(size).splitlines(self.sh_NLINE)):
 
             v = v.decode('utf-8')
             list.append(self.pyon_data, v)
@@ -208,7 +203,6 @@ class Fahsocket(ContextDecorator):
             print('\nSet send buffer size: ' + str(size))
             Fahsocket.dolog(self, 'Set send buffer size: ' + str(size))
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, size)
-            self.sendsize = self.sock.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
 
         return self.sendsize
 
@@ -221,7 +215,6 @@ class Fahsocket(ContextDecorator):
             print('\nSet receive buffer size: ' + str(size))
             Fahsocket.dolog(self, 'Set receive buffer size: ' + str(size))
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, size)
-            self.recvsize = self.sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
 
         return self.recvsize
 
@@ -232,7 +225,6 @@ class Fahsocket(ContextDecorator):
         self.data = []
 
         for i, v in enumerate(pyon_data):
-
             if parameter in v:
 
                 v = v.strip(' ,')
@@ -245,7 +237,6 @@ class Fahsocket(ContextDecorator):
     def dolog(self, output):
 
         if self.log_ON is True:
-
             with closing(open('log.txt', 'a')) as self.logfile:
 
                 self.logfile.write(output + '\n')
