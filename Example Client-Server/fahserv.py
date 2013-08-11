@@ -33,7 +33,7 @@ with Fahsocket(16, None, False, True, True, False) as s1:
     conn1.send('ACK: Connected!'.encode('utf-8'))
 
     try:	
-        while 1:
+        while True:
             rlist, wlist, elist = select.select([conn1.fileno()], [], [], 5)
 
             for conn in rlist:
